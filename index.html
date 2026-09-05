@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mambeldev — dev móvil e IA</title>
+<meta name="description" content="mambeldev: desarrollo móvil (Flutter, Android, Swift) e IA local. Contenido técnico sin relleno.">
+<style>
+  :root{
+    --bg:#08090B;
+    --panel:#14171B;
+    --panel-alt:#1A1E23;
+    --border:#262B31;
+    --text:#EDEFF2;
+    --text-muted:#7C8590;
+    --code-bg:#1C2126;
+    --green:#5FE38A;
+    --amber:#FFB454;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+
+  .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace}
+
+  ::selection{background:var(--amber);color:var(--bg)}
+
+  a{color:inherit}
+
+  /* ---------- layout shell ---------- */
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  .bg-grid{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:.18;
+    mask-image:radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, transparent 75%);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:22px 0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:9px;
+    background:#0C0D10;
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .brand-mark svg{width:16px;height:16px}
+  .brand-name{
+    font-size:15px;
+    letter-spacing:.02em;
+    color:var(--text);
+  }
+  .brand-name .u{color:var(--amber)}
+  .topbar nav{
+    display:flex;
+    gap:22px;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+  .topbar nav a{text-decoration:none;transition:color .15s ease}
+  .topbar nav a:hover{color:var(--text)}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:64px 0 40px;
+  }
+  .eyebrow{
+    font-size:12px;
+    color:var(--green);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin:0 0 18px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+  }
+
+  h1{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:700;
+    font-size:clamp(34px,6vw,58px);
+    line-height:1.08;
+    letter-spacing:-.01em;
+    margin:0 0 22px;
+    text-wrap:balance;
+    color:var(--text);
+  }
+  h1 .accent{color:var(--amber)}
+
+  .hero-sub{
+    font-size:17px;
+    color:var(--text-muted);
+    max-width:60ch;
+    margin:0 0 34px;
+  }
+
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:56px;
+  }
+  .btn{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    padding:11px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid transparent;
+    transition:transform .12s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{
+    background:var(--amber);
+    color:#1A1204;
+    font-weight:600;
+  }
+  .btn-primary:hover{background:#ffc274}
+  .btn-ghost{
+    background:transparent;
+    border-color:var(--border);
+    color:var(--text-muted);
+  }
+  .btn-ghost:hover{border-color:var(--text-muted);color:var(--text)}
+
+  /* ---------- terminal window ---------- */
+  .terminal{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.7);
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 16px;
+    background:var(--panel-alt);
+    border-bottom:1px solid var(--border);
+  }
+  .dot{width:10px;height:10px;border-radius:50%}
+  .dot.r{background:#5B5F66}
+  .dot.y{background:#5B5F66}
+  .dot.g{background:#5B5F66}
+  .terminal-title{
+    margin-left:8px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--text-muted);
+  }
+  .terminal-body{
+    padding:22px 24px 28px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:14px;
+    color:var(--text);
+    min-height:190px;
+  }
+  .line{margin:0 0 10px; white-space:pre-wrap; word-break:break-word}
+  .prompt{color:var(--green)}
+  .path{color:#7CA9E3}
+  .out{color:var(--text-muted)}
+  .cursor{
+    display:inline-block;
+    width:8px;height:16px;
+    background:var(--amber);
+    margin-left:2px;
+    vertical-align:-3px;
+    animation:blink 1s steps(1) infinite;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cursor{animation:none}
+  }
+  @keyframes blink{50%{opacity:0}}
+
+  /* ---------- section shell ---------- */
+  section{padding:76px 0}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:34px;
+  }
+  .section-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+  h2{
+    font-family:"JetBrains Mono",monospace;
+    font-size:22px;
+    margin:0;
+    color:var(--text);
+  }
+  .rule{
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+
+  /* ---------- about ---------- */
+  .about-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:30px 32px;
+  }
+  .about-card .cmd{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    color:var(--green);
+    margin:0 0 16px;
+  }
+  .about-card p{
+    font-size:17px;
+    color:var(--text);
+    max-width:62ch;
+    margin:0;
+  }
+
+  /* ---------- stack ---------- */
+  .stack-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px;
+  }
+  .stack-item{
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .stack-item .k{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--text-muted);
+  }
+  .stack-item .v{
+    font-family:"JetBrains Mono",monospace;
+    font-size:15px;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .stack-item .v::before{
+    content:"▹";
+    color:var(--amber);
+  }
+
+  /* ---------- content pillars ---------- */
+  .pillars{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .pillar{
+    background:var(--panel);
+    padding:24px 26px;
+    display:grid;
+    grid-template-columns:100px 1fr;
+    gap:18px;
+    align-items:start;
+  }
+  .pillar .tag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:var(--bg);
+    background:var(--green);
+    border-radius:6px;
+    padding:4px 8px;
+    height:fit-content;
+    text-align:center;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .pillar h3{
+    margin:0 0 6px;
+    font-size:16px;
+    font-family:"JetBrains Mono",monospace;
+    color:var(--text);
+  }
+  .pillar p{
+    margin:0;
+    color:var(--text-muted);
+    font-size:14.5px;
+    max-width:56ch;
+  }
+
+  /* ---------- portfolio ---------- */
+  .repo-card{
+    background:var(--code-bg);
+    border:1px dashed var(--border);
+    border-radius:12px;
+    padding:28px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .repo-card .cmd{
+    font-family:"JetBrains Mono",monospace;
+    font-size:14px;
+    color:var(--text-muted);
+  }
+  .repo-card .cmd .g{color:var(--green)}
+  .status-chip{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--amber);
+    border:1px solid rgba(255,180,84,.35);
+    background:rgba(255,180,84,.08);
+    padding:6px 12px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+
+  /* ---------- socials / footer ---------- */
+  footer{
+    padding:64px 0 60px;
+    border-top:1px solid var(--border);
+  }
+  .footer-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:32px;
+    flex-wrap:wrap;
+    margin-bottom:40px;
+  }
+  .footer-brand p{
+    color:var(--text-muted);
+    font-size:14px;
+    max-width:38ch;
+    margin:10px 0 0;
+  }
+  .social-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .social-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+  .social-row .handle{color:var(--text)}
+  .soon{
+    font-size:10px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    border:1px solid var(--border);
+    padding:2px 7px;
+    border-radius:999px;
+  }
+  .footer-bottom{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    color:var(--text-muted);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .footer-bottom .amber{color:var(--amber)}
+
+  @media (max-width:640px){
+    .pillar{grid-template-columns:1fr}
+    .repo-card{flex-direction:column;align-items:flex-start}
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6l8 6-8 6" stroke="#EDEFF2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14.5" y="16.2" width="5.5" height="2.2" rx="1.1" fill="#FFB454"/></svg>
+      </span>
+      <span class="brand-name mono">mambeldev<span class="u">_</span></span>
+    </a>
+    <nav>
+      <a href="#sobre-mi">sobre mí</a>
+      <a href="#stack">stack</a>
+      <a href="#contenido">contenido</a>
+      <a href="#portafolio">portafolio</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <p class="eyebrow">disponible · construyendo en público</p>
+    <h1>Apps móviles.<br>IA local.<br><span class="accent">Cero relleno.</span></h1>
+    <p class="hero-sub">Desarrollador móvil senior documentando el camino hacia la IA — código real, modelos corriendo en local, y lo que de verdad se dice en una entrevista técnica.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#contenido">Ver de qué hablo →</a>
+      <a class="btn btn-ghost" href="#sobre-mi">Sobre mí</a>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="terminal-title">zsh — mambeldev</span>
+      </div>
+      <div class="terminal-body" id="term-body" aria-live="polite">
+        <p class="line"><span class="prompt">mambeldev@landing</span> <span class="path">~</span> % whoami</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sobre-mi">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2>sobre mí</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="about-card">
+      <p class="cmd">$ cat bio.txt</p>
+      <p>Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.</p>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>stack</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="stack-grid">
+      <div class="stack-item">
+        <span class="k">móvil</span>
+        <span class="v">Flutter</span>
+      </div>
+      <div class="stack-item">
+        <span class="k">móvil</span>
+        <span class="v">Android</span>
+      </div>
+      <div class="stack-item">
+        <span class="k">móvil</span>
+        <span class="v">Swift</span>
+      </div>
+      <div class="stack-item">
+        <span class="k">ia</span>
+        <span class="v">Modelos locales</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contenido">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>de qué hablo</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="pillars">
+      <div class="pillar">
+        <span class="tag">IA local</span>
+        <div>
+          <h3>Levantar modelos de IA en local</h3>
+          <p>Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal.</p>
+        </div>
+      </div>
+      <div class="pillar">
+        <span class="tag">Entrevistas</span>
+        <div>
+          <h3>Lo que te descarta en una entrevista técnica</h3>
+          <p>Palabras y respuestas concretas que hacen que un entrevistador te tache de la lista — y cómo evitarlas sin sonar ensayado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="portafolio">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2>portafolio</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="repo-card">
+      <p class="cmd mono">$ <span class="g">git clone</span> github.com/mambeldev/portafolio<span class="cursor" style="height:14px"></span></p>
+      <span class="status-chip">repo público · próximamente</span>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="brand-name mono">mambeldev<span class="u">_</span></span>
+        <p>Contenido de desarrollo móvil e IA, directo al grano.</p>
+      </div>
+      <div class="social-list">
+        <div class="social-row"><span>tiktok</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
+        <div class="social-row"><span>instagram</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
+        <div class="social-row"><span>youtube</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom mono">
+      <span>© 2026 mambeldev</span>
+      <span>mambeldev.com <span class="amber">_</span></span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var body = document.getElementById('term-body');
+  var lines = [
+    { p: true, text: 'desarrollador móvil senior' },
+    { p: false, text: 'construyendo con IA, en público' },
+    { cmd: true, text: 'cat stack.txt' },
+    { p: false, text: 'flutter · android · swift · ia local' },
+    { cmd: true, text: 'echo $STATUS' },
+    { p: false, text: 'preparando el primer contenido…', accent:true }
+  ];
+
+  if(reduce){
+    render();
+    return;
+  }
+
+  var i = 0;
+  function next(){
+    if(i >= lines.length){
+      var c = document.createElement('span');
+      c.className='cursor';
+      body.appendChild(c);
+      return;
+    }
+    var item = lines[i];
+    var p = document.createElement('p');
+    p.className = 'line';
+    if(item.cmd){
+      p.innerHTML = '<span class="prompt">mambeldev@landing</span> <span class="path">~</span> % ' + item.text;
+    } else {
+      p.innerHTML = (item.accent ? '<span style="color:var(--amber)">' : '<span class="out">') + item.text + '</span>';
+    }
+    body.appendChild(p);
+    i++;
+    setTimeout(next, item.cmd ? 420 : 620);
+  }
+  setTimeout(next, 500);
+
+  function render(){
+    lines.forEach(function(item){
+      var p = document.createElement('p');
+      p.className = 'line';
+      if(item.cmd){
+        p.innerHTML = '<span class="prompt">mambeldev@landing</span> <span class="path">~</span> % ' + item.text;
+      } else {
+        p.innerHTML = (item.accent ? '<span style="color:var(--amber)">' : '<span class="out">') + item.text + '</span>';
+      }
+      body.appendChild(p);
+    });
+  }
+})();
+</script>
+</body>
+</html>
