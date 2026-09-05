@@ -16,10 +16,11 @@
     --code-bg:#1C2126;
     --green:#5FE38A;
     --amber:#FFB454;
+    --header-h:70px;
   }
 
   *,*::before,*::after{box-sizing:border-box}
-  html{background:var(--bg)}
+  html{background:var(--bg);scroll-behavior:smooth}
   body{
     margin:0;
     background:var(--bg);
@@ -27,6 +28,7 @@
     font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
     -webkit-font-smoothing:antialiased;
     line-height:1.6;
+    padding-top:var(--header-h);
   }
 
   .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace}
@@ -34,6 +36,7 @@
   ::selection{background:var(--amber);color:var(--bg)}
 
   a{color:inherit}
+  button{font:inherit}
 
   /* ---------- layout shell ---------- */
   .wrap{
@@ -54,18 +57,33 @@
     mask-image:radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, transparent 75%);
   }
 
-  /* ---------- top bar ---------- */
-  .topbar{
+  /* ---------- fixed header ---------- */
+  .site-header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    height:var(--header-h);
+    background:rgba(8,9,11,.82);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    height:100%;
+    max-width:920px;
+    margin:0 auto;
+    padding:0 24px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:22px 0;
+    gap:18px;
   }
   .brand{
     display:flex;
     align-items:center;
     gap:10px;
     text-decoration:none;
+    flex-shrink:0;
   }
   .brand-mark{
     width:30px;height:30px;border-radius:9px;
@@ -81,18 +99,52 @@
     color:var(--text);
   }
   .brand-name .u{color:var(--amber)}
-  .topbar nav{
+
+  .site-nav{
     display:flex;
     gap:22px;
     font-size:13px;
     color:var(--text-muted);
+    flex:1;
+    justify-content:center;
   }
-  .topbar nav a{text-decoration:none;transition:color .15s ease}
-  .topbar nav a:hover{color:var(--text)}
+  .site-nav a{text-decoration:none;transition:color .15s ease;white-space:nowrap}
+  .site-nav a:hover{color:var(--text)}
+
+  .header-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-shrink:0;
+  }
+
+  .lang-toggle{
+    display:flex;
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .lang-btn{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.03em;
+    background:transparent;
+    border:none;
+    color:var(--text-muted);
+    padding:7px 11px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .lang-btn.active{background:var(--amber);color:#1A1204;font-weight:600}
+  .lang-btn:not(.active):hover{color:var(--text)}
+
+  @media (max-width:760px){
+    .site-nav{display:none}
+  }
 
   /* ---------- hero ---------- */
   .hero{
-    padding:64px 0 40px;
+    padding:56px 0 40px;
   }
   .eyebrow{
     font-size:12px;
@@ -146,6 +198,7 @@
     align-items:center;
     gap:8px;
     border:1px solid transparent;
+    cursor:pointer;
     transition:transform .12s ease, border-color .15s ease, background .15s ease;
   }
   .btn:hover{transform:translateY(-1px)}
@@ -161,6 +214,7 @@
     color:var(--text-muted);
   }
   .btn-ghost:hover{border-color:var(--text-muted);color:var(--text)}
+  .btn-talk{padding:9px 16px}
 
   /* ---------- terminal window ---------- */
   .terminal{
@@ -178,10 +232,7 @@
     background:var(--panel-alt);
     border-bottom:1px solid var(--border);
   }
-  .dot{width:10px;height:10px;border-radius:50%}
-  .dot.r{background:#5B5F66}
-  .dot.y{background:#5B5F66}
-  .dot.g{background:#5B5F66}
+  .dot{width:10px;height:10px;border-radius:50%;background:#5B5F66}
   .terminal-title{
     margin-left:8px;
     font-family:"JetBrains Mono",monospace;
@@ -213,7 +264,7 @@
   @keyframes blink{50%{opacity:0}}
 
   /* ---------- section shell ---------- */
-  section{padding:76px 0}
+  section{padding:76px 0;scroll-margin-top:calc(var(--header-h) + 16px)}
   .section-head{
     display:flex;
     align-items:baseline;
@@ -405,6 +456,7 @@
     border:1px solid var(--border);
     padding:2px 7px;
     border-radius:999px;
+    white-space:nowrap;
   }
   .footer-bottom{
     font-family:"JetBrains Mono",monospace;
@@ -421,6 +473,99 @@
     .pillar{grid-template-columns:1fr}
     .repo-card{flex-direction:column;align-items:flex-start}
   }
+
+  /* ---------- contact modal ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:rgba(4,5,6,.72);
+    backdrop-filter:blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay[hidden]{display:none}
+  .modal-card{
+    width:100%;
+    max-width:480px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:28px;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,.6);
+  }
+  .modal-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:6px;
+  }
+  .modal-head h3{
+    font-family:"JetBrains Mono",monospace;
+    font-size:19px;
+    margin:0;
+    color:var(--text);
+  }
+  .modal-close{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    width:28px;height:28px;
+    border-radius:7px;
+    cursor:pointer;
+    line-height:1;
+    flex-shrink:0;
+  }
+  .modal-close:hover{color:var(--text);border-color:var(--text-muted)}
+  .modal-sub{
+    color:var(--text-muted);
+    font-size:14px;
+    margin:0 0 22px;
+  }
+  .contact-form{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .contact-form label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:6px;
+    display:block;
+  }
+  .contact-form input,
+  .contact-form textarea{
+    width:100%;
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+    color:var(--text);
+    font-family:"Inter",sans-serif;
+    font-size:14px;
+    resize:vertical;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus{
+    outline:none;
+    border-color:var(--amber);
+  }
+  .contact-form .btn{
+    align-self:flex-start;
+    margin-top:4px;
+    border:none;
+  }
+  .modal-note{
+    font-size:12px;
+    color:var(--text-muted);
+    margin:12px 0 0;
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -430,77 +575,88 @@
 
 <div class="bg-grid"></div>
 
-<div class="wrap">
-
-  <header class="topbar">
+<header class="site-header">
+  <div class="header-inner">
     <a class="brand" href="#top">
       <span class="brand-mark">
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 6l8 6-8 6" stroke="#EDEFF2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14.5" y="16.2" width="5.5" height="2.2" rx="1.1" fill="#FFB454"/></svg>
       </span>
       <span class="brand-name mono">mambeldev<span class="u">_</span></span>
     </a>
-    <nav>
-      <a href="#sobre-mi">sobre mí</a>
-      <a href="#stack">stack</a>
-      <a href="#contenido">contenido</a>
-      <a href="#portafolio">portafolio</a>
+    <nav class="site-nav">
+      <a href="#sobre-mi" data-i18n="nav.about">sobre mí</a>
+      <a href="#stack" data-i18n="nav.stack">stack</a>
+      <a href="#contenido" data-i18n="nav.content">contenido</a>
+      <a href="#portafolio" data-i18n="nav.portfolio">portafolio</a>
     </nav>
-  </header>
+    <div class="header-actions">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button type="button" class="btn btn-primary btn-talk" id="openContact" data-i18n="nav.talk">Hablemos</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
 
   <section class="hero" id="top">
-    <p class="eyebrow">disponible · construyendo en público</p>
-    <h1>Apps móviles.<br>IA local.<br><span class="accent">Cero relleno.</span></h1>
-    <p class="hero-sub">Desarrollador móvil senior documentando el camino hacia la IA — código real, modelos corriendo en local, y lo que de verdad se dice en una entrevista técnica.</p>
+    <p class="eyebrow" data-i18n="eyebrow">disponible · construyendo en público</p>
+    <h1>
+      <span data-i18n="h1.line1">Apps móviles.</span><br>
+      <span data-i18n="h1.line2">IA local.</span><br>
+      <span class="accent" data-i18n="h1.line3">Cero relleno.</span>
+    </h1>
+    <p class="hero-sub" data-i18n="heroSub">Desarrollador móvil senior documentando el camino hacia la IA — código real, modelos corriendo en local, y lo que de verdad se dice en una entrevista técnica.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#contenido">Ver de qué hablo →</a>
-      <a class="btn btn-ghost" href="#sobre-mi">Sobre mí</a>
+      <a class="btn btn-primary" href="#contenido" data-i18n="heroBtnPrimary">Ver de qué hablo →</a>
+      <a class="btn btn-ghost" href="#sobre-mi" data-i18n="heroBtnGhost">Sobre mí</a>
     </div>
 
     <div class="terminal">
       <div class="terminal-bar">
-        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="terminal-title">zsh — mambeldev</span>
       </div>
-      <div class="terminal-body" id="term-body" aria-live="polite">
-        <p class="line"><span class="prompt">mambeldev@landing</span> <span class="path">~</span> % whoami</p>
-      </div>
+      <div class="terminal-body" id="term-body" aria-live="polite"></div>
     </div>
   </section>
 
   <section id="sobre-mi">
     <div class="section-head">
       <span class="section-num">01</span>
-      <h2>sobre mí</h2>
+      <h2 data-i18n="section.about">sobre mí</h2>
       <div class="rule"></div>
     </div>
     <div class="about-card">
       <p class="cmd">$ cat bio.txt</p>
-      <p>Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.</p>
+      <p data-i18n="aboutBio">Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.</p>
     </div>
   </section>
 
   <section id="stack">
     <div class="section-head">
       <span class="section-num">02</span>
-      <h2>stack</h2>
+      <h2 data-i18n="section.stack">stack</h2>
       <div class="rule"></div>
     </div>
     <div class="stack-grid">
       <div class="stack-item">
-        <span class="k">móvil</span>
+        <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Flutter</span>
       </div>
       <div class="stack-item">
-        <span class="k">móvil</span>
+        <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Android</span>
       </div>
       <div class="stack-item">
-        <span class="k">móvil</span>
+        <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Swift</span>
       </div>
       <div class="stack-item">
-        <span class="k">ia</span>
-        <span class="v">Modelos locales</span>
+        <span class="k" data-i18n="stack.ai">ia</span>
+        <span class="v" data-i18n="stack.localModels">Modelos locales</span>
       </div>
     </div>
   </section>
@@ -508,22 +664,22 @@
   <section id="contenido">
     <div class="section-head">
       <span class="section-num">03</span>
-      <h2>de qué hablo</h2>
+      <h2 data-i18n="section.content">de qué hablo</h2>
       <div class="rule"></div>
     </div>
     <div class="pillars">
       <div class="pillar">
-        <span class="tag">IA local</span>
+        <span class="tag" data-i18n="pillar1.tag">IA local</span>
         <div>
-          <h3>Levantar modelos de IA en local</h3>
-          <p>Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal.</p>
+          <h3 data-i18n="pillar1.title">Levantar modelos de IA en local</h3>
+          <p data-i18n="pillar1.desc">Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal.</p>
         </div>
       </div>
       <div class="pillar">
-        <span class="tag">Entrevistas</span>
+        <span class="tag" data-i18n="pillar2.tag">Entrevistas</span>
         <div>
-          <h3>Lo que te descarta en una entrevista técnica</h3>
-          <p>Palabras y respuestas concretas que hacen que un entrevistador te tache de la lista — y cómo evitarlas sin sonar ensayado.</p>
+          <h3 data-i18n="pillar2.title">Lo que te descarta en una entrevista técnica</h3>
+          <p data-i18n="pillar2.desc">Palabras y respuestas concretas que hacen que un entrevistador te tache de la lista — y cómo evitarlas sin sonar ensayado.</p>
         </div>
       </div>
     </div>
@@ -532,12 +688,12 @@
   <section id="portafolio">
     <div class="section-head">
       <span class="section-num">04</span>
-      <h2>portafolio</h2>
+      <h2 data-i18n="section.portfolio">portafolio</h2>
       <div class="rule"></div>
     </div>
     <div class="repo-card">
       <p class="cmd mono">$ <span class="g">git clone</span> github.com/mambeldev/portafolio<span class="cursor" style="height:14px"></span></p>
-      <span class="status-chip">repo público · próximamente</span>
+      <span class="status-chip" data-i18n="repoStatus">repo público · próximamente</span>
     </div>
   </section>
 
@@ -545,12 +701,12 @@
     <div class="footer-top">
       <div class="footer-brand">
         <span class="brand-name mono">mambeldev<span class="u">_</span></span>
-        <p>Contenido de desarrollo móvil e IA, directo al grano.</p>
+        <p data-i18n="footerTagline">Contenido de desarrollo móvil e IA, directo al grano.</p>
       </div>
       <div class="social-list">
-        <div class="social-row"><span>tiktok</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
-        <div class="social-row"><span>instagram</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
-        <div class="social-row"><span>youtube</span><span class="handle">@mambeldev</span><span class="soon">próximamente</span></div>
+        <div class="social-row"><span>tiktok</span><span class="handle">@mambeldev</span><span class="soon" data-i18n="soon">próximamente</span></div>
+        <div class="social-row"><span>instagram</span><span class="handle">@mambeldev</span><span class="soon" data-i18n="soon">próximamente</span></div>
+        <div class="social-row"><span>youtube</span><span class="handle">@mambeldev</span><span class="soon" data-i18n="soon">próximamente</span></div>
       </div>
     </div>
     <div class="footer-bottom mono">
@@ -561,58 +717,224 @@
 
 </div>
 
+<div class="modal-overlay" id="contactOverlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle" data-i18n="modal.title">¿Tienes una idea?</h3>
+      <button type="button" class="modal-close" id="closeContact" aria-label="Cerrar">✕</button>
+    </div>
+    <p class="modal-sub" data-i18n="modal.sub">Escríbeme y te respondo directo a tu correo.</p>
+    <form id="contactForm" class="contact-form" novalidate>
+      <div>
+        <label data-i18n="modal.name">Nombre</label>
+        <input type="text" id="cf-name" required data-i18n-placeholder="modal.namePh" placeholder="Tu nombre">
+      </div>
+      <div>
+        <label data-i18n="modal.email">Correo</label>
+        <input type="email" id="cf-email" required data-i18n-placeholder="modal.emailPh" placeholder="tu@correo.com">
+      </div>
+      <div>
+        <label data-i18n="modal.message">Mensaje</label>
+        <textarea id="cf-message" required rows="4" data-i18n-placeholder="modal.messagePh" placeholder="Cuéntame en qué puedo ayudarte..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" data-i18n="modal.send">Enviar mensaje →</button>
+      <p class="modal-note" data-i18n="modal.note">Se abrirá tu cliente de correo con el mensaje listo para enviar.</p>
+    </form>
+  </div>
+</div>
+
 <script>
 (function(){
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var body = document.getElementById('term-body');
-  var lines = [
-    { p: true, text: 'desarrollador móvil senior' },
-    { p: false, text: 'construyendo con IA, en público' },
-    { cmd: true, text: 'cat stack.txt' },
-    { p: false, text: 'flutter · android · swift · ia local' },
-    { cmd: true, text: 'echo $STATUS' },
-    { p: false, text: 'preparando el primer contenido…', accent:true }
-  ];
 
-  if(reduce){
-    render();
-    return;
+  var translations = {
+    es: {
+      nav:{about:"sobre mí",stack:"stack",content:"contenido",portfolio:"portafolio",talk:"Hablemos"},
+      eyebrow:"disponible · construyendo en público",
+      h1:{line1:"Apps móviles.",line2:"IA local.",line3:"Cero relleno."},
+      heroSub:"Desarrollador móvil senior documentando el camino hacia la IA — código real, modelos corriendo en local, y lo que de verdad se dice en una entrevista técnica.",
+      heroBtnPrimary:"Ver de qué hablo →",
+      heroBtnGhost:"Sobre mí",
+      section:{about:"sobre mí",stack:"stack",content:"de qué hablo",portfolio:"portafolio"},
+      aboutBio:"Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.",
+      stack:{mobile:"móvil",ai:"ia",localModels:"Modelos locales"},
+      pillar1:{tag:"IA local",title:"Levantar modelos de IA en local",desc:"Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal."},
+      pillar2:{tag:"Entrevistas",title:"Lo que te descarta en una entrevista técnica",desc:"Palabras y respuestas concretas que hacen que un entrevistador te tache de la lista — y cómo evitarlas sin sonar ensayado."},
+      repoStatus:"repo público · próximamente",
+      footerTagline:"Contenido de desarrollo móvil e IA, directo al grano.",
+      soon:"próximamente",
+      modal:{
+        title:"¿Tienes una idea?",
+        sub:"Escríbeme y te respondo directo a tu correo.",
+        name:"Nombre", namePh:"Tu nombre",
+        email:"Correo", emailPh:"tu@correo.com",
+        message:"Mensaje", messagePh:"Cuéntame en qué puedo ayudarte...",
+        send:"Enviar mensaje →",
+        note:"Se abrirá tu cliente de correo con el mensaje listo para enviar."
+      },
+      term:[
+        {cmd:true, text:"whoami"},
+        {cmd:false, text:"desarrollador móvil senior"},
+        {cmd:false, text:"construyendo con IA, en público"},
+        {cmd:true, text:"cat stack.txt"},
+        {cmd:false, text:"flutter · android · swift · ia local"},
+        {cmd:true, text:"echo $STATUS"},
+        {cmd:false, text:"preparando el primer contenido…", accent:true}
+      ]
+    },
+    en: {
+      nav:{about:"about",stack:"stack",content:"content",portfolio:"portfolio",talk:"Let's talk"},
+      eyebrow:"available · building in public",
+      h1:{line1:"Mobile apps.",line2:"Local AI.",line3:"Zero fluff."},
+      heroSub:"Senior mobile developer documenting the path into AI — real code, models running locally, and what actually gets said in a technical interview.",
+      heroBtnPrimary:"See what I talk about →",
+      heroBtnGhost:"About me",
+      section:{about:"about me",stack:"stack",content:"what I talk about",portfolio:"portfolio"},
+      aboutBio:"I'm a senior mobile developer. I'm learning AI in public because the best way to master something is to explain it. The goal: technical content worth watching, no fluff.",
+      stack:{mobile:"mobile",ai:"ai",localModels:"Local models"},
+      pillar1:{tag:"Local AI",title:"Running local AI models",desc:"How to run models without depending on an external API: what you need, what options exist, and how far they go on regular hardware."},
+      pillar2:{tag:"Interviews",title:"What gets you rejected in a tech interview",desc:"Specific words and answers that get an interviewer to cross you off the list — and how to avoid them without sounding rehearsed."},
+      repoStatus:"public repo · coming soon",
+      footerTagline:"Mobile dev and AI content, straight to the point.",
+      soon:"coming soon",
+      modal:{
+        title:"Got an idea?",
+        sub:"Write to me and I'll reply straight to your inbox.",
+        name:"Name", namePh:"Your name",
+        email:"Email", emailPh:"you@email.com",
+        message:"Message", messagePh:"Tell me what you need...",
+        send:"Send message →",
+        note:"This will open your email client with the message ready to send."
+      },
+      term:[
+        {cmd:true, text:"whoami"},
+        {cmd:false, text:"senior mobile developer"},
+        {cmd:false, text:"building with AI, in public"},
+        {cmd:true, text:"cat stack.txt"},
+        {cmd:false, text:"flutter · android · swift · local ai"},
+        {cmd:true, text:"echo $STATUS"},
+        {cmd:false, text:"preparing the first content…", accent:true}
+      ]
+    }
+  };
+
+  var currentLang = "es";
+  var termAnimated = false;
+
+  function get(obj, path){
+    return path.split(".").reduce(function(o,k){ return o && o[k] !== undefined ? o[k] : null; }, obj);
   }
 
-  var i = 0;
-  function next(){
-    if(i >= lines.length){
-      var c = document.createElement('span');
-      c.className='cursor';
-      body.appendChild(c);
-      return;
-    }
-    var item = lines[i];
-    var p = document.createElement('p');
-    p.className = 'line';
-    if(item.cmd){
-      p.innerHTML = '<span class="prompt">mambeldev@landing</span> <span class="path">~</span> % ' + item.text;
-    } else {
-      p.innerHTML = (item.accent ? '<span style="color:var(--amber)">' : '<span class="out">') + item.text + '</span>';
-    }
-    body.appendChild(p);
-    i++;
-    setTimeout(next, item.cmd ? 420 : 620);
+  function applyStaticText(lang){
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      var val = get(translations[lang], el.getAttribute("data-i18n"));
+      if(val != null) el.textContent = val;
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function(el){
+      var val = get(translations[lang], el.getAttribute("data-i18n-placeholder"));
+      if(val != null) el.setAttribute("placeholder", val);
+    });
+    document.querySelectorAll(".lang-btn").forEach(function(b){
+      var active = b.getAttribute("data-lang") === lang;
+      b.classList.toggle("active", active);
+      b.setAttribute("aria-pressed", active ? "true" : "false");
+    });
   }
-  setTimeout(next, 500);
 
-  function render(){
-    lines.forEach(function(item){
-      var p = document.createElement('p');
-      p.className = 'line';
+  function renderTerminal(lang, animate){
+    var body = document.getElementById("term-body");
+    var lines = translations[lang].term;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    body.innerHTML = "";
+
+    function lineEl(item){
+      var p = document.createElement("p");
+      p.className = "line";
       if(item.cmd){
         p.innerHTML = '<span class="prompt">mambeldev@landing</span> <span class="path">~</span> % ' + item.text;
       } else {
-        p.innerHTML = (item.accent ? '<span style="color:var(--amber)">' : '<span class="out">') + item.text + '</span>';
+        p.innerHTML = (item.accent ? '<span style="color:var(--amber)">' : '<span class="out">') + item.text + "</span>";
       }
-      body.appendChild(p);
-    });
+      return p;
+    }
+
+    if(!animate || reduce){
+      lines.forEach(function(item){ body.appendChild(lineEl(item)); });
+      var c = document.createElement("span");
+      c.className = "cursor";
+      body.appendChild(c);
+      return;
+    }
+
+    var i = 0;
+    function next(){
+      if(i >= lines.length){
+        var cur = document.createElement("span");
+        cur.className = "cursor";
+        body.appendChild(cur);
+        return;
+      }
+      body.appendChild(lineEl(lines[i]));
+      i++;
+      setTimeout(next, lines[i-1] && lines[i-1].cmd ? 420 : 620);
+    }
+    setTimeout(next, 400);
   }
+
+  function setLang(lang){
+    currentLang = lang;
+    applyStaticText(lang);
+    renderTerminal(lang, !termAnimated);
+    termAnimated = true;
+  }
+
+  document.querySelectorAll(".lang-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      setLang(btn.getAttribute("data-lang"));
+    });
+  });
+
+  setLang("es");
+
+  /* ---------- contact modal ---------- */
+  var overlay = document.getElementById("contactOverlay");
+  var openBtn = document.getElementById("openContact");
+  var closeBtn = document.getElementById("closeContact");
+  var form = document.getElementById("contactForm");
+
+  function openModal(){
+    overlay.hidden = false;
+    document.getElementById("cf-name").focus();
+  }
+  function closeModal(){
+    overlay.hidden = true;
+  }
+
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", function(e){
+    if(e.target === overlay) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !overlay.hidden) closeModal();
+  });
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("cf-name").value.trim();
+    var email = document.getElementById("cf-email").value.trim();
+    var message = document.getElementById("cf-message").value.trim();
+
+    var subject = "Contacto desde mambeldev.com — " + name;
+    var body = message + "\n\n---\n" + name + "\n" + email;
+    var mailto = "mailto:contacto@mambeldev.com"
+      + "?subject=" + encodeURIComponent(subject)
+      + "&body=" + encodeURIComponent(body);
+
+    window.location.href = mailto;
+  });
+
 })();
 </script>
 </body>
