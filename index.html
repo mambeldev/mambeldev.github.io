@@ -474,6 +474,101 @@
     .repo-card{flex-direction:column;align-items:flex-start}
   }
 
+  /* ---------- certifications ---------- */
+  .cert-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:14px;
+  }
+  .cert-card{
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px 20px;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .cert-card:hover{border-color:var(--amber);transform:translateY(-2px)}
+  .cert-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .cert-badge{
+    width:26px;height:26px;
+    border-radius:7px;
+    background:rgba(95,227,138,.12);
+    border:1px solid rgba(95,227,138,.35);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .cert-badge svg{width:13px;height:13px}
+  .cert-issuer{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .cert-name{
+    font-family:"JetBrains Mono",monospace;
+    font-size:14px;
+    color:var(--text);
+    line-height:1.4;
+  }
+  .cert-link{
+    font-size:12px;
+    color:var(--amber);
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(26px);
+    transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);
+    will-change:opacity, transform;
+  }
+  .reveal.in-view{opacity:1;transform:translateY(0)}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+  }
+
+  /* ---------- scroll cue ---------- */
+  .scroll-cue{
+    display:flex;
+    justify-content:center;
+    margin:8px 0 0;
+  }
+  .scroll-cue a{
+    width:30px;height:30px;
+    border:1px solid var(--border);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-muted);
+    animation:cue-bounce 2.2s ease-in-out infinite;
+  }
+  .scroll-cue a:hover{color:var(--amber);border-color:var(--amber)}
+  @keyframes cue-bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(6px)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .scroll-cue a{animation:none}
+  }
+
+  /* ---------- parallax layers ---------- */
+  [data-parallax]{will-change:transform}
+  @media (prefers-reduced-motion:reduce){
+    [data-parallax]{transform:none !important}
+  }
+
   /* ---------- contact modal ---------- */
   .modal-overlay{
     position:fixed;
@@ -573,7 +668,7 @@
 </head>
 <body>
 
-<div class="bg-grid"></div>
+<div class="bg-grid" data-parallax="14"></div>
 
 <header class="site-header">
   <div class="header-inner">
@@ -586,6 +681,7 @@
     <nav class="site-nav">
       <a href="#sobre-mi" data-i18n="nav.about">sobre mí</a>
       <a href="#stack" data-i18n="nav.stack">stack</a>
+      <a href="#certificaciones" data-i18n="nav.certs">certs</a>
       <a href="#contenido" data-i18n="nav.content">contenido</a>
       <a href="#portafolio" data-i18n="nav.portfolio">portafolio</a>
     </nav>
@@ -614,68 +710,124 @@
       <a class="btn btn-ghost" href="#sobre-mi" data-i18n="heroBtnGhost">Sobre mí</a>
     </div>
 
-    <div class="terminal">
+    <div class="terminal" data-parallax="-30">
       <div class="terminal-bar">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="terminal-title">zsh — mambeldev</span>
       </div>
       <div class="terminal-body" id="term-body" aria-live="polite"></div>
     </div>
+
+    <div class="scroll-cue">
+      <a href="#sobre-mi" aria-label="Scroll down">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
   </section>
 
   <section id="sobre-mi">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="section-num">01</span>
       <h2 data-i18n="section.about">sobre mí</h2>
       <div class="rule"></div>
     </div>
-    <div class="about-card">
+    <div class="about-card reveal">
       <p class="cmd">$ cat bio.txt</p>
       <p data-i18n="aboutBio">Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.</p>
     </div>
   </section>
 
   <section id="stack">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="section-num">02</span>
       <h2 data-i18n="section.stack">stack</h2>
       <div class="rule"></div>
     </div>
-    <div class="stack-grid">
-      <div class="stack-item">
+    <div class="stack-grid" data-stagger>
+      <div class="stack-item reveal">
         <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Flutter</span>
       </div>
-      <div class="stack-item">
+      <div class="stack-item reveal">
         <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Android</span>
       </div>
-      <div class="stack-item">
+      <div class="stack-item reveal">
         <span class="k" data-i18n="stack.mobile">móvil</span>
         <span class="v">Swift</span>
       </div>
-      <div class="stack-item">
+      <div class="stack-item reveal">
         <span class="k" data-i18n="stack.ai">ia</span>
         <span class="v" data-i18n="stack.localModels">Modelos locales</span>
       </div>
     </div>
   </section>
 
-  <section id="contenido">
-    <div class="section-head">
+  <section id="certificaciones">
+    <div class="section-head reveal">
       <span class="section-num">03</span>
+      <h2 data-i18n="section.certs">certificaciones</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="cert-grid" data-stagger>
+      <a class="cert-card reveal" href="https://platzi.com/p/mambelangel5/curso/11059-course/diploma/detalle/" target="_blank" rel="noopener">
+        <div class="cert-top">
+          <span class="cert-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#5FE38A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="cert-issuer">Platzi</span>
+        </div>
+        <span class="cert-name">Git y GitHub</span>
+        <span class="cert-link" data-i18n="cert.view">Ver diploma →</span>
+      </a>
+      <a class="cert-card reveal" href="https://platzi.com/p/mambelangel5/curso/11257-course/diploma/detalle/" target="_blank" rel="noopener">
+        <div class="cert-top">
+          <span class="cert-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#5FE38A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="cert-issuer">Platzi</span>
+        </div>
+        <span class="cert-name">Swift para Apps iOS</span>
+        <span class="cert-link" data-i18n="cert.view">Ver diploma →</span>
+      </a>
+      <a class="cert-card reveal" href="https://platzi.com/p/mambelangel5/curso/10002-course/diploma/detalle/" target="_blank" rel="noopener">
+        <div class="cert-top">
+          <span class="cert-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#5FE38A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="cert-issuer">Platzi</span>
+        </div>
+        <span class="cert-name">Python</span>
+        <span class="cert-link" data-i18n="cert.view">Ver diploma →</span>
+      </a>
+      <a class="cert-card reveal" href="https://platzi.com/p/mambelangel5/curso/11975-course/diploma/detalle/" target="_blank" rel="noopener">
+        <div class="cert-top">
+          <span class="cert-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#5FE38A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="cert-issuer">Platzi</span>
+        </div>
+        <span class="cert-name">SQL y MySQL</span>
+        <span class="cert-link" data-i18n="cert.view">Ver diploma →</span>
+      </a>
+      <a class="cert-card reveal" href="https://platzi.com/p/mambelangel5/curso/10267-course/diploma/detalle/" target="_blank" rel="noopener">
+        <div class="cert-top">
+          <span class="cert-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#5FE38A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="cert-issuer">Platzi</span>
+        </div>
+        <span class="cert-name" data-i18n="cert.nosql">Bases de Datos NoSQL</span>
+        <span class="cert-link" data-i18n="cert.view">Ver diploma →</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="contenido">
+    <div class="section-head reveal">
+      <span class="section-num">04</span>
       <h2 data-i18n="section.content">de qué hablo</h2>
       <div class="rule"></div>
     </div>
-    <div class="pillars">
-      <div class="pillar">
+    <div class="pillars" data-stagger>
+      <div class="pillar reveal">
         <span class="tag" data-i18n="pillar1.tag">IA local</span>
         <div>
           <h3 data-i18n="pillar1.title">Levantar modelos de IA en local</h3>
           <p data-i18n="pillar1.desc">Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal.</p>
         </div>
       </div>
-      <div class="pillar">
+      <div class="pillar reveal">
         <span class="tag" data-i18n="pillar2.tag">Entrevistas</span>
         <div>
           <h3 data-i18n="pillar2.title">Lo que te descarta en una entrevista técnica</h3>
@@ -686,12 +838,12 @@
   </section>
 
   <section id="portafolio">
-    <div class="section-head">
-      <span class="section-num">04</span>
+    <div class="section-head reveal">
+      <span class="section-num">05</span>
       <h2 data-i18n="section.portfolio">portafolio</h2>
       <div class="rule"></div>
     </div>
-    <div class="repo-card">
+    <div class="repo-card reveal">
       <p class="cmd mono">$ <span class="g">git clone</span> github.com/mambeldev/portafolio<span class="cursor" style="height:14px"></span></p>
       <span class="status-chip" data-i18n="repoStatus">repo público · próximamente</span>
     </div>
@@ -748,13 +900,14 @@
 
   var translations = {
     es: {
-      nav:{about:"sobre mí",stack:"stack",content:"contenido",portfolio:"portafolio",talk:"Hablemos"},
+      nav:{about:"sobre mí",stack:"stack",certs:"certs",content:"contenido",portfolio:"portafolio",talk:"Hablemos"},
       eyebrow:"disponible · construyendo en público",
       h1:{line1:"Apps móviles.",line2:"IA local.",line3:"Cero relleno."},
       heroSub:"Desarrollador móvil senior documentando el camino hacia la IA — código real, modelos corriendo en local, y lo que de verdad se dice en una entrevista técnica.",
       heroBtnPrimary:"Ver de qué hablo →",
       heroBtnGhost:"Sobre mí",
-      section:{about:"sobre mí",stack:"stack",content:"de qué hablo",portfolio:"portafolio"},
+      section:{about:"sobre mí",stack:"stack",certs:"certificaciones",content:"de qué hablo",portfolio:"portafolio"},
+      cert:{view:"Ver diploma →", nosql:"Bases de Datos NoSQL"},
       aboutBio:"Soy desarrollador móvil senior. Estoy aprendiendo IA en público porque la mejor forma de dominar algo es explicarlo. La meta: contenido técnico que valga la pena ver, sin humo.",
       stack:{mobile:"móvil",ai:"ia",localModels:"Modelos locales"},
       pillar1:{tag:"IA local",title:"Levantar modelos de IA en local",desc:"Cómo correr modelos sin depender de una API externa: qué necesitas, qué opciones existen y qué tan lejos llegan en hardware normal."},
@@ -782,13 +935,14 @@
       ]
     },
     en: {
-      nav:{about:"about",stack:"stack",content:"content",portfolio:"portfolio",talk:"Let's talk"},
+      nav:{about:"about",stack:"stack",certs:"certs",content:"content",portfolio:"portfolio",talk:"Let's talk"},
       eyebrow:"available · building in public",
       h1:{line1:"Mobile apps.",line2:"Local AI.",line3:"Zero fluff."},
       heroSub:"Senior mobile developer documenting the path into AI — real code, models running locally, and what actually gets said in a technical interview.",
       heroBtnPrimary:"See what I talk about →",
       heroBtnGhost:"About me",
-      section:{about:"about me",stack:"stack",content:"what I talk about",portfolio:"portfolio"},
+      section:{about:"about me",stack:"stack",certs:"certifications",content:"what I talk about",portfolio:"portfolio"},
+      cert:{view:"View diploma →", nosql:"NoSQL Databases"},
       aboutBio:"I'm a senior mobile developer. I'm learning AI in public because the best way to master something is to explain it. The goal: technical content worth watching, no fluff.",
       stack:{mobile:"mobile",ai:"ai",localModels:"Local models"},
       pillar1:{tag:"Local AI",title:"Running local AI models",desc:"How to run models without depending on an external API: what you need, what options exist, and how far they go on regular hardware."},
@@ -896,6 +1050,61 @@
   });
 
   setLang("es");
+
+  /* ---------- scroll reveal ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll("[data-stagger]").forEach(function(group){
+    Array.prototype.forEach.call(group.children, function(child, i){
+      if(child.classList.contains("reveal")){
+        child.style.transitionDelay = (i * 70) + "ms";
+      }
+    });
+  });
+
+  if(reduceMotion || !("IntersectionObserver" in window)){
+    document.querySelectorAll(".reveal").forEach(function(el){ el.classList.add("in-view"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add("in-view");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+  }
+
+  /* ---------- parallax ---------- */
+  if(!reduceMotion){
+    var parallaxEls = Array.prototype.slice.call(document.querySelectorAll("[data-parallax]"));
+    var ticking = false;
+
+    function updateParallax(){
+      var vh = window.innerHeight;
+      parallaxEls.forEach(function(el){
+        var speed = parseFloat(el.getAttribute("data-parallax")) || 0;
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2;
+        var progress = (vh / 2 - center) / vh; // ~ -1 .. 1 near viewport
+        var clamped = Math.max(-1, Math.min(1, progress));
+        el.style.transform = "translate3d(0," + (clamped * speed).toFixed(1) + "px,0)";
+      });
+      ticking = false;
+    }
+
+    function onScrollOrResize(){
+      if(!ticking){
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    updateParallax();
+  }
 
   /* ---------- contact modal ---------- */
   var overlay = document.getElementById("contactOverlay");
